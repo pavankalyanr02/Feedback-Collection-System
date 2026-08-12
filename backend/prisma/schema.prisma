@@ -1,0 +1,183 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id               String               @id @default(uuid())
+  email            String               @unique
+  passwordHash     String
+  firstName        String
+  lastName         String
+  avatarUrl        String?
+  isVerified       Boolean              @default(true)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  memberships      OrganizationMember[]
+  createdForms     FeedbackForm[]       @relation("FormCreator")
+  responses        FeedbackResponse[]   @relation("RespondentUser")
+  auditLogs        AuditLog[]
+  notifications    Notification[]
+
+  @@map("users")
+}
+
+model Organization {
+  id          String               @id @default(uuid())
+  name        String
+  slug        String               @unique
+  logoUrl     String?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  members     OrganizationMember[]
+  forms       FeedbackForm[]
+  auditLogs   AuditLog[]
+
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id             String       @id @default(uuid())
+  organizationId String
+  userId         String
+  role           String       @default("MEMBER") // ADMIN, MANAGER, MEMBER, RESPONDENT
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@map("organization_members")
+}
+
+model FeedbackForm {
+  id             String             @id @default(uuid())
+  organizationId String
+  creatorId      String
+  title          String
+  description    String?
+  status         String             @default("DRAFT") // DRAFT, PUBLISHED, CLOSED
+  publicId       String             @unique @default(uuid())
+  allowAnonymous Boolean            @default(true)
+  requireAuth    Boolean            @default(false)
+  onePerUser     Boolean            @default(false)
+  expiresAt      DateTime?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  creator        User               @relation("FormCreator", fields: [creatorId], references: [id])
+  questions      FormQuestion[]
+  responses      FeedbackResponse[]
+  shares         FormShare[]
+
+  @@map("feedback_forms")
+}
+
+model FormQuestion {
+  id           String             @id @default(uuid())
+  formId       String
+  type         String             // SHORT_TEXT, LONG_TEXT, MULTIPLE_CHOICE, SINGLE_CHOICE, RATING, STAR_RATING, YES_NO, DROPDOWN, NUMBER, DATE
+  title        String
+  description  String?
+  isRequired   Boolean            @default(false)
+  orderIndex   Int                @default(0)
+  validation   String?            // Optional JSON string
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  form         FeedbackForm       @relation(fields: [formId], references: [id], onDelete: Cascade)
+  options      QuestionOption[]
+  answers      FeedbackAnswer[]
+
+  @@map("form_questions")
+}
+
+model QuestionOption {
+  id         String       @id @default(uuid())
+  questionId String
+  label      String
+  value      String
+  orderIndex Int          @default(0)
+
+  question   FormQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("question_options")
+}
+
+model FeedbackResponse {
+  id           String           @id @default(uuid())
+  formId       String
+  respondentId String?
+  isAnonymous  Boolean          @default(true)
+  ipAddress    String?
+  userAgent    String?
+  submittedAt  DateTime         @default(now())
+
+  form         FeedbackForm     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  respondent   User?            @relation("RespondentUser", fields: [respondentId], references: [id], onDelete: SetNull)
+  answers      FeedbackAnswer[]
+
+  @@map("feedback_responses")
+}
+
+model FeedbackAnswer {
+  id         String           @id @default(uuid())
+  responseId String
+  questionId String
+  value      String
+  createdAt  DateTime         @default(now())
+
+  response   FeedbackResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  question   FormQuestion     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("feedback_answers")
+}
+
+model FormShare {
+  id         String       @id @default(uuid())
+  formId     String
+  sharedWith String
+  accessType String       @default("VIEW")
+  createdAt  DateTime     @default(now())
+
+  form       FeedbackForm @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  @@map("form_shares")
+}
+
+model AuditLog {
+  id             String        @id @default(uuid())
+  organizationId String?
+  userId         String?
+  action         String
+  entity         String
+  entityId       String?
+  metadata       String?
+  ipAddress      String?
+  createdAt      DateTime      @default(now())
+
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  type      String   @default("INFO")
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}

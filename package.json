@@ -1,0 +1,38 @@
+{
+  "name": "feedback-collection-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Production-grade Feedback Collection System SaaS platform built with React, TypeScript, Express, Prisma, and PostgreSQL.",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "build": "npm run build:backend && npm run build:frontend",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm test",
+    "test": "npm run test:backend",
+    "prisma:generate": "cd backend && npx prisma generate",
+    "prisma:migrate": "cd backend && npx prisma migrate dev",
+    "prisma:seed": "cd backend && npx prisma db seed",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
+  },
+  "keywords": [
+    "feedback",
+    "saas",
+    "react",
+    "typescript",
+    "express",
+    "prisma",
+    "postgresql",
+    "recharts",
+    "docker"
+  ],
+  "author": "Pavan Kalyan R",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
