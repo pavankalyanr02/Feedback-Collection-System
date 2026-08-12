@@ -1,11 +1,27 @@
 import request from 'supertest';
 import app from '../src/app';
 import { prisma } from '../src/config/db';
+import { execSync } from 'child_process';
 
 describe('Feedback Collection System - API Integration Tests', () => {
   let authToken: string;
   let testPublicId: string;
   let testFormId: string;
+
+  beforeAll(async () => {
+    try {
+      const admin = await prisma.user.findUnique({
+        where: { email: 'admin@feedback.com' },
+      });
+      if (!admin) {
+        execSync('npx prisma db push --accept-data-loss', { cwd: __dirname + '/..' });
+        execSync('npx prisma db seed', { cwd: __dirname + '/..' });
+      }
+    } catch {
+      execSync('npx prisma db push --accept-data-loss', { cwd: __dirname + '/..' });
+      execSync('npx prisma db seed', { cwd: __dirname + '/..' });
+    }
+  });
 
   afterAll(async () => {
     await prisma.$disconnect();

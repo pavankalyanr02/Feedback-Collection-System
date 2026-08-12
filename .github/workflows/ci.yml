@@ -1,4 +1,4 @@
-name: CI / CD Pipeline
+name: CI Pipeline
 
 on:
   push:
@@ -10,6 +10,12 @@ jobs:
   backend-tests:
     name: Backend Lint, Build & Test
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      DATABASE_URL: "file:./test.db"
+      JWT_SECRET: "ci_jwt_secret_key_feedback_2026"
+      JWT_REFRESH_SECRET: "ci_jwt_refresh_secret_key_feedback_2026"
+      PORT: "5000"
     steps:
       - uses: actions/checkout@v4
 
@@ -25,10 +31,16 @@ jobs:
           cd backend
           npm ci
 
-      - name: Prisma Client Generate
+      - name: Generate Prisma Client
         run: |
           cd backend
           npx prisma generate
+
+      - name: Setup Test Database and Seed Data
+        run: |
+          cd backend
+          npx prisma db push --accept-data-loss
+          npx prisma db seed
 
       - name: Build Backend
         run: |

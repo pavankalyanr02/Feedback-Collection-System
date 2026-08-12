@@ -1,119 +1,121 @@
-# 🚀 Feedback Collection System - Enterprise SaaS Platform
+# Feedback Collection System
 
-[![CI/CD Pipeline](https://github.com/pavankalyanr02/Feedback-Collection-System/actions/workflows/ci.yml/badge.svg)](https://github.com/pavankalyanr02/Feedback-Collection-System/actions/workflows/ci.yml)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg)](https://nodejs.org/)
-[![React Version](https://img.shields.io/badge/react-v18.3.1-blue.svg)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/typescript-v5.6.2-blue.svg)](https://www.typescriptlang.org/)
-[![Prisma ORM](https://img.shields.io/badge/prisma-v5.22.0-indigo.svg)](https://www.prisma.io/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+A full-stack web application designed for organizations to build feedback forms, distribute them to users via public links, collect structured responses, and analyze metrics through interactive dashboards.
 
-A production-grade, enterprise-ready **Feedback Collection & Analytics SaaS Platform** built from scratch using a modern TypeScript full-stack monorepo architecture. 
+The platform allows team members to create custom forms with multiple question types, manage workspace access using role-based access control, collect both anonymous and authenticated feedback, and view response trends through visual charts and data tables.
 
-This platform empowers multi-tenant organizations to build dynamic feedback forms, capture authenticated or anonymous public submissions with duplicate rate-limiting protection, analyze real-time metric aggregations with visual Recharts dashboards, manage team members with Role-Based Access Control (RBAC), and export response datasets to CSV.
+Built with React, TypeScript, Tailwind CSS, Express.js, Prisma ORM, and SQLite for local development (with PostgreSQL support for production deployments).
 
----
+## Features
 
-## 🌟 Key Product Features
+* User registration and authentication
+* Role-based access control (Admin, Manager, Member, Respondent)
+* Workspace and organization management
+* Feedback form builder supporting 10 question types
+* Form status management (Draft, Published, Closed)
+* Public feedback submission endpoints
+* Anonymous and authenticated feedback submission
+* Response rate-limiting and duplicate submission prevention
+* Analytics dashboard with chart visualizations
+* Response management with search, filtering, and pagination
+* CSV export for response data
+* System audit logs
+* Interactive API documentation via Swagger UI
+* Dark and light theme support
 
-### 🏢 Multi-Tenant Workspace & Role-Based Access Control (RBAC)
-- **4 Granular Roles**: `ADMIN`, `MANAGER`, `MEMBER`, `RESPONDENT`.
-- **Workspace Isolation**: Multi-tenant database architecture where forms, analytics, and audit logs are strictly scoped per organization.
-- **Backend & Frontend Enforcement**: Authorization checks enforced at both React Router guards and Express API middleware layers.
+## Technology Stack
 
-### 📝 Dynamic Feedback Form Builder
-- **10 Supported Question Types**:
-  - `Star Rating` (Interactive 1–5 star widget)
-  - `Rating` (1 to 10 scale)
-  - `Single Choice` (Radio buttons)
-  - `Multiple Choice` (Checkboxes)
-  - `Dropdown` (Select list)
-  - `Short Text` & `Long Text` (Text inputs & textareas)
-  - `Yes / No` (Choice toggle)
-  - `Number` & `Date` inputs
-- **Form Configuration**: Required/optional flags, question description, ordering, options editor, form expiration date, one-submission-per-user constraint, and live preview tab.
-- **Form Lifecycle States**: `DRAFT`, `PUBLISHED`, `CLOSED`.
+| Layer | Technology |
+| --- | --- |
+| Frontend | React 18, TypeScript, Vite, React Router v6 |
+| Styling | Tailwind CSS, Lucide Icons |
+| State & Fetching | TanStack React Query v5, React Hook Form, Zod, Axios |
+| Data Visualization | Recharts |
+| Backend | Node.js, Express.js, TypeScript |
+| ORM & Database | Prisma ORM 5, SQLite (development) / PostgreSQL (production) |
+| Authentication | JWT (Access and Refresh tokens), bcryptjs |
+| Security | Helmet, CORS, Express Rate Limit |
+| API Documentation | Swagger UI, swagger-jsdoc |
+| Logging | Pino |
+| Testing | Jest, Supertest |
+| Containerization & CI | Docker, Docker Compose, GitHub Actions |
 
-### 🌐 Anonymous & Public Feedback Submissions
-- **Unique Public URLs**: `/feedback/<public-form-id>` accessible without user login when anonymous feedback is enabled.
-- **Rate-Limiting & Duplicate Prevention**: Protection against spam submissions via IP rate-limiting and user tracking.
-
-### 📊 Real-Time Analytics & Response Management
-- **Executive Dashboard**: Total forms, active forms count, total response volume, average CSAT score, and response trends.
-- **Visual Charts**: Interactive rating distribution bar charts and daily submission trend line charts using **Recharts**.
-- **Data Table & CSV Export**: Server-side paginated response table with response drawer modal and instant CSV export generator.
-- **Audit Logs**: Comprehensive event stream capturing form publications, role modifications, and admin events.
-
----
-
-## 🏗️ Technology Stack
-
-| Layer | Technologies Used |
-| :--- | :--- |
-| **Frontend Framework** | React 18, TypeScript, Vite, React Router v6 |
-| **Styling & UI** | Tailwind CSS, Glassmorphism SaaS Design System, Lucide React Icons |
-| **State & Data Fetching** | TanStack React Query v5, React Hook Form, Zod, Axios |
-| **Charts & Visualization** | Recharts |
-| **Backend API Server** | Node.js, Express.js, TypeScript (Layered Controller-Service-Repository Pattern) |
-| **ORM & Database** | Prisma ORM 5, PostgreSQL (Primary Production) / SQLite (Zero-setup Dev Fallback) |
-| **Security & Authentication** | JWT Dual-Token (Access + Refresh), bcryptjs Password Hashing, Helmet, CORS, Express Rate Limit |
-| **API Documentation** | Swagger UI (`/api-docs`) via OpenAPI 3.0 & `swagger-jsdoc` |
-| **Logging** | Pino Logger (`pino-pretty`) |
-| **Testing** | Jest, Supertest, Vitest |
-| **Containerization & CI/CD**| Docker, Docker Compose, GitHub Actions |
-
----
-
-## 📁 Repository Structure
+## Project Structure
 
 ```
 feedback-collection-system/
-├── backend/                        # Node.js Express & Prisma Backend
+├── backend/
 │   ├── prisma/
-│   │   ├── schema.prisma           # Database Schema Definition
-│   │   └── seed.ts                 # Database Seeding Script (Admin, Forms, Questions, Responses)
+│   │   ├── schema.prisma
+│   │   └── seed.ts
 │   ├── src/
-│   │   ├── config/                 # Env validation & Prisma database singleton
-│   │   ├── controllers/            # Request handlers (Auth, Org, Form, Response, Analytics)
-│   │   ├── middlewares/            # Auth, RBAC, Zod validator, Error handler, Rate limiters
-│   │   ├── routes/                 # API Endpoint routes
-│   │   ├── services/               # Core business logic layer
-│   │   ├── swagger/                # OpenAPI spec definitions
-│   │   ├── utils/                  # AppError, apiResponse, jwt, logger
-│   │   ├── app.ts                  # Express App configuration
-│   │   └── server.ts               # Server bootstrap & process lifecycle
-│   ├── tests/                      # Jest & Supertest Integration Tests
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── middlewares/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   ├── swagger/
+│   │   ├── utils/
+│   │   ├── app.ts
+│   │   └── server.ts
+│   ├── tests/
+│   │   └── api.test.ts
 │   ├── Dockerfile
 │   ├── tsconfig.json
 │   └── package.json
-│
-├── frontend/                       # React + Vite + Tailwind CSS Frontend
+├── frontend/
 │   ├── src/
-│   │   ├── api/                    # Axios client with automatic JWT token interceptors
-│   │   ├── components/             # Reusable UI components (Sidebar, Header, Cards, Badges, Charts)
-│   │   ├── context/                # AuthContext & ThemeContext (Light/Dark mode)
-│   │   ├── pages/                  # DashboardPage, FormsPage, FormBuilderPage, PublicFormPage, etc.
-│   │   ├── routes/                 # AppRoutes with ProtectedRoute RBAC guards
-│   │   ├── types/                  # TypeScript interface definitions
+│   │   ├── api/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── pages/
+│   │   ├── routes/
+│   │   ├── types/
 │   │   ├── App.tsx
 │   │   └── main.tsx
 │   ├── Dockerfile
-│   ├── nginx.conf                  # Production Nginx web server config
+│   ├── nginx.conf
 │   ├── tailwind.config.js
 │   ├── vite.config.ts
 │   └── package.json
-│
-├── .github/workflows/ci.yml         # Automated GitHub Actions Workflow
-├── docker-compose.yml              # Multi-container Orchestration (Postgres, Redis, Backend, Frontend)
-├── .env.example                    # Environment Configuration Template
-├── package.json                    # Root Monorepo Scripts
-└── README.md                       # Project Documentation
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+├── docker-compose.yml
+├── .env.example
+├── package.json
+└── README.md
 ```
 
----
+### Key Directories
 
-## 🗄️ Database Schema & Entities
+* `backend/src/controllers`: Request handling and HTTP response formatting.
+* `backend/src/services`: Core business logic layer.
+* `backend/src/middlewares`: Authentication, RBAC, request validation, rate limiting, and error handling.
+* `backend/prisma`: Database schema definitions and seed data.
+* `frontend/src/pages`: Main application views including Dashboard, Form Builder, Analytics, and Public Submissions.
+* `frontend/src/components`: UI components, navigation, and layout structures.
 
-The database is modeled using Prisma ORM with strict foreign keys, cascade rules, and indexes:
+## Architecture
+
+The system uses a client-server architecture:
+
+```
+Frontend (React + Vite)
+  ↓ HTTP / REST API
+Express Backend (Node.js + TypeScript)
+  ↓ Controller Layer
+Service Layer
+  ↓ Data Access Layer
+Prisma ORM
+  ↓ Database (SQLite / PostgreSQL)
+```
+
+The backend is structured around a Controller-Service pattern. Routes forward requests to controllers, which validate input and delegate execution to service modules. Services interact with the database through Prisma ORM.
+
+## Database
+
+The database model contains 11 main entities: `User`, `Organization`, `OrganizationMember`, `FeedbackForm`, `FormQuestion`, `QuestionOption`, `FeedbackResponse`, `FeedbackAnswer`, `FormShare`, `AuditLog`, and `Notification`.
 
 ```mermaid
 erDiagram
@@ -130,164 +132,219 @@ erDiagram
     User ||--o{ Notification : "receives"
 ```
 
----
+## API
 
-## 🔌 API Endpoints Summary
+Interactive API documentation is available at `http://localhost:5000/api-docs` when the backend is running.
 
-Interactive Swagger / OpenAPI UI is accessible at **`http://localhost:5000/api-docs`**.
+### Authentication
 
-### Authentication & User Profile
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/v1/auth/register` | Public | Register user & create default workspace |
-| `POST` | `/api/v1/auth/login` | Public | Authenticate user & return JWT tokens |
-| `POST` | `/api/v1/auth/refresh` | Public | Obtain new access token using refresh token |
-| `POST` | `/api/v1/auth/logout` | Authenticated | Revoke user tokens |
-| `GET`  | `/api/v1/auth/me` | Authenticated | Get current authenticated user profile |
+* `POST /api/v1/auth/register`: Register new user and workspace
+* `POST /api/v1/auth/login`: Authenticate user credentials and return JWT tokens
+* `POST /api/v1/auth/refresh`: Issue new access token from refresh token
+* `POST /api/v1/auth/logout`: Log out user
+* `GET /api/v1/auth/me`: Get current authenticated user profile
 
-### Organizations & Workspaces
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `GET`  | `/api/v1/organizations` | Authenticated | List organizations user belongs to |
-| `POST` | `/api/v1/organizations` | Authenticated | Create a new organization workspace |
-| `GET`  | `/api/v1/organizations/:id/members` | RBAC (`MEMBER`+) | List workspace team members |
-| `POST` | `/api/v1/organizations/:id/members` | RBAC (`ADMIN`) | Add user to workspace with assigned role |
+### Organizations
 
-### Feedback Form Management
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `GET`  | `/api/v1/forms` | Authenticated | Paginated forms list with search & status filter |
-| `POST` | `/api/v1/forms` | RBAC (`MANAGER`+) | Create a new feedback form with questions |
-| `GET`  | `/api/v1/forms/:id` | Authenticated | Get form details with questions & options |
-| `PUT`  | `/api/v1/forms/:id` | RBAC (`MANAGER`+) | Update form title, description, or questions |
-| `DELETE`|`/api/v1/forms/:id` | RBAC (`ADMIN`) | Delete feedback form |
-| `POST` | `/api/v1/forms/:id/publish` | RBAC (`MANAGER`+) | Change form status to `PUBLISHED` |
-| `POST` | `/api/v1/forms/:id/duplicate` | RBAC (`MANAGER`+) | Duplicate form structure |
+* `GET /api/v1/organizations`: List organizations for authenticated user
+* `POST /api/v1/organizations`: Create new workspace
+* `GET /api/v1/organizations/:orgId/members`: List workspace members
+* `POST /api/v1/organizations/:orgId/members`: Add member to workspace
 
-### Public Submissions (Respondents)
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `GET`  | `/api/v1/public/forms/:publicId` | Public | Fetch public form layout for respondent |
-| `POST` | `/api/v1/public/forms/:publicId/responses` | Public (Rate Limited) | Submit feedback answers |
+### Forms
 
-### Response Management & Analytics
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `GET`  | `/api/v1/forms/:id/responses` | RBAC (`MANAGER`+) | Paginated form responses |
-| `DELETE`|`/api/v1/forms/:id/responses/:rId`| RBAC (`ADMIN`) | Delete specific feedback response |
-| `GET`  | `/api/v1/analytics/dashboard` | Authenticated | Executive dashboard overview metrics |
-| `GET`  | `/api/v1/forms/:id/analytics` | Authenticated | Question-by-question metrics breakdown |
+* `GET /api/v1/forms`: Fetch paginated forms with status and search filters
+* `POST /api/v1/forms`: Create new feedback form with questions
+* `GET /api/v1/forms/:id`: Fetch form details and questions
+* `PUT /api/v1/forms/:id`: Update form configuration or questions
+* `DELETE /api/v1/forms/:id`: Delete feedback form
+* `POST /api/v1/forms/:id/publish`: Publish feedback form
+* `POST /api/v1/forms/:id/duplicate`: Duplicate existing form structure
 
----
+### Public Feedback
 
-## ⚡ Quick Start Guide (Local Development)
+* `GET /api/v1/public/forms/:publicId`: Fetch public form for respondent view
+* `POST /api/v1/public/forms/:publicId/responses`: Submit feedback answers
+
+### Responses
+
+* `GET /api/v1/forms/:id/responses`: Fetch paginated form responses
+* `DELETE /api/v1/forms/:id/responses/:responseId`: Delete feedback response
+
+### Analytics
+
+* `GET /api/v1/analytics/dashboard`: Fetch workspace analytics summary
+* `GET /api/v1/forms/:id/analytics`: Fetch question-by-question statistical breakdown
+
+## Local Development
 
 ### Prerequisites
-- **Node.js**: `v20.0.0` or higher
-- **npm**: `v10.0.0` or higher
 
-### 1. Clone & Install Dependencies
-```bash
-git clone https://github.com/pavankalyanr02/Feedback-Collection-System.git
-cd Feedback-Collection-System
+* Node.js v20.0.0 or higher
+* npm v10.0.0 or higher
 
-# Install root dependencies
-npm install
+### Installation
 
-# Install backend dependencies
-cd backend && npm install && cd ..
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/pavankalyanr02/Feedback-Collection-System.git
+   cd Feedback-Collection-System
+   ```
 
-# Install frontend dependencies
-cd frontend && npm install && cd ..
-```
+2. Install backend dependencies:
+   ```bash
+   cd backend
+   npm install
+   cd ..
+   ```
 
-### 2. Setup Environment Variables
-Copy `.env.example` to `backend/.env`:
-```bash
-cp .env.example backend/.env
-```
+3. Install frontend dependencies:
+   ```bash
+   cd frontend
+   npm install
+   cd ..
+   ```
 
-### 3. Initialize & Seed Database
-```bash
-cd backend
-npx prisma db push
-npx prisma db seed
-cd ..
-```
+4. Configure environment variables:
+   ```bash
+   cp .env.example backend/.env
+   ```
 
-### 4. Start Development Servers
-Run both backend Express server (`port 5000`) and frontend Vite server (`port 5173`) concurrently:
-```bash
-npm run dev
-```
+5. Initialize the database schema and seed data:
+   ```bash
+   cd backend
+   npx prisma db push
+   npx prisma db seed
+   cd ..
+   ```
 
-Open **`http://localhost:5173`** in your browser!
+6. Start development servers:
 
-### 🔑 Demo Portfolio Credentials:
-- **Admin**: `admin@feedback.com` / `Password123!`
-- **Manager**: `manager@feedback.com` / `Password123!`
-- **Member**: `member@feedback.com` / `Password123!`
+   Backend server (Port 5000):
+   ```bash
+   cd backend
+   npm run dev
+   ```
 
----
+   Frontend server (Port 5173):
+   ```bash
+   cd frontend
+   npm run dev
+   ```
 
-## 🐳 Docker Deployment
+   Alternatively, start both concurrently from the root directory:
+   ```bash
+   npm run dev
+   ```
 
-To launch the complete production environment (PostgreSQL database, Redis cache, Node.js backend, and Nginx frontend) with a single command:
+## Environment Variables
+
+Copy `.env.example` to `backend/.env` to configure local settings:
+
+* `PORT`: Backend server port (default: 5000)
+* `DATABASE_URL`: Prisma connection string (`file:./dev.db` for local SQLite)
+* `JWT_SECRET`: Secret key used to sign access tokens
+* `JWT_REFRESH_SECRET`: Secret key used to sign refresh tokens
+* `FRONTEND_URL`: URL of the frontend application for CORS policy
+* `CORS_ORIGIN`: Allowed CORS origin
+
+Do not commit real production secrets or credentials to version control.
+
+## Demo Accounts
+
+The database seed script creates the following development accounts:
+
+* Admin: `admin@feedback.com` / `Password123!`
+* Manager: `manager@feedback.com` / `Password123!`
+* Member: `member@feedback.com` / `Password123!`
+
+These credentials are intended for local development and testing only.
+
+## Docker
+
+To start the application stack using Docker Compose:
 
 ```bash
 docker compose up -d
 ```
 
-Access services:
-- **Frontend App**: `http://localhost:5173`
-- **Backend API**: `http://localhost:5000`
-- **Swagger Documentation**: `http://localhost:5000/api-docs`
+This starts PostgreSQL, Redis, the Node.js backend, and the Nginx frontend container.
 
----
+Services will be accessible at:
+* Frontend: `http://localhost:5173`
+* Backend API: `http://localhost:5000`
+* Swagger API Docs: `http://localhost:5000/api-docs`
 
-## 🧪 Automated Testing
+To stop containers:
+```bash
+docker compose down
+```
 
-### Backend Integration Tests (Jest + Supertest)
+## Testing
+
+### Backend Integration Tests
+
+Run the integration test suite using Jest and Supertest:
+
 ```bash
 cd backend
 npm test
 ```
 
 ### Frontend Build Verification
+
+Verify frontend TypeScript types and production build:
+
 ```bash
 cd frontend
 npm run build
 ```
 
----
+GitHub Actions executes automated integration tests and production builds on push and pull requests to main branches.
 
-## 🔒 Security Best Practices
+## CI/CD
 
-1. **Password Hashing**: Passwords stored using `bcryptjs` with salt rounds = 10.
-2. **Stateless JWT Flow**: 15-minute Access Tokens + 7-day HttpOnly Refresh Tokens.
-3. **HTTP Security Headers**: Express app secured with **Helmet** (CSP, HSTS, X-Content-Type-Options).
-4. **Rate Limiting**: `express-rate-limit` prevents brute-force login attempts and DDoS submission spam.
-5. **Prisma Parameterized Queries**: Complete protection against SQL injection vulnerabilities.
-6. **Input Validation**: All API payloads, URL route params, and query strings validated with **Zod** schemas.
+Automated CI workflows are defined in `.github/workflows/ci.yml`.
 
----
+On push or pull request to `main` or `master`:
+1. Dependencies are installed using `npm ci`.
+2. Prisma client code is generated.
+3. A test database is created and seeded.
+4. Backend code is built with `npm run build`.
+5. Integration tests are run with `npm test`.
+6. Frontend application is built with `npm run build`.
 
-## 👨‍💻 Portfolio & Placement Summary
+## Security
 
-**Developer**: Pavan Kalyan R  
-**Degree**: Master of Computer Applications (MCA)  
-**Project Goal**: Full-Stack Production SaaS Showcase  
+Security measures implemented in the application include:
 
-### Technical Capabilities Demonstrated:
-- Designing scalable multi-tenant database models using Prisma & PostgreSQL.
-- Building RESTful APIs following Clean Layered Architecture (Controller-Service-Repository pattern).
-- Enforcing Role-Based Access Control (RBAC) across full-stack boundaries.
-- Designing responsive, high-performance React application state management with TanStack Query & React Hook Form.
-- Implementing real-time chart visualizations with Recharts and dark-mode glassmorphism styling with Tailwind CSS.
-- Automated API integration testing, Docker containerization, and GitHub Actions CI/CD.
+* Password Hashing: Password hashing using bcryptjs with 10 salt rounds.
+* Authentication: JWT access and refresh token authentication flow.
+* Authorization: Middleware enforcing Role-Based Access Control on protected routes.
+* Input Validation: Request body, parameter, and query string validation using Zod.
+* Security Headers: HTTP security header protection via Helmet middleware.
+* Rate Limiting: IP-based rate limiting on sensitive endpoints via Express Rate Limit.
+* Parameterized Queries: SQL injection mitigation via Prisma ORM.
+* CORS Restrictions: Configured cross-origin resource sharing policy.
 
----
+## Deployment
 
-## 📄 License
+To deploy the application to a cloud host:
 
-This project is licensed under the [MIT License](LICENSE).
+1. Configure frontend environment variables to point to the production backend API URL.
+2. Configure backend environment variables (`DATABASE_URL`, `JWT_SECRET`, `JWT_REFRESH_SECRET`, `CORS_ORIGIN`).
+3. Provision a managed PostgreSQL instance and run database migrations.
+4. Deploy the backend to a Node.js web service environment (such as Render, Railway, or AWS).
+5. Deploy the frontend static assets or Nginx container (such as Vercel, Netlify, or Docker).
+
+## Future Improvements
+
+* Email notification delivery for response alerts
+* Background job queue architecture using BullMQ and Redis
+* Advanced analytical filters and trend export options
+* Multi-language feedback form internationalization
+* Form custom branding and domain mapping
+
+## License
+
+This project is licensed under the MIT License.
