@@ -30,8 +30,8 @@ export class AnalyticsService {
     ]);
 
     // CSAT (Customer Satisfaction) calculation for overall average rating.
-    // CSAT is strictly calculated from 1–5 scale rating questions (such as STAR_RATING).
-    // Questions with 1-10 rating scales (such as "Ease of Use 1 to 10") are excluded to avoid invalid averages > 5.0.
+    // CSAT is strictly calculated on a 1–5 scale.
+    // STAR_RATING (1-5) is included directly. RATING is included only if values are <= 5 (excluding 1-10 scales).
     const ratingAnswers = await prisma.feedbackAnswer.findMany({
       where: {
         question: {
@@ -50,25 +50,21 @@ export class AnalyticsService {
       },
     });
 
-    const answersByQuestion: Record<string, { type: string; values: number[] }> = {};
-    ratingAnswers.forEach((a) => {
-      const qId = a.question.id;
-      const numVal = parseFloat(a.value);
-      if (!isNaN(numVal)) {
-        if (!answersByQuestion[qId]) {
-          answersByQuestion[qId] = { type: a.question.type, values: [] };
-        }
-        answersByQuestion[qId].values.push(numVal);
-      }
-    });
-
     const csatValues: number[] = [];
-    Object.values(answersByQuestion).forEach((qData) => {
-      const maxVal = Math.max(...qData.values);
-      // STAR_RATING is explicitly 1-5 scale.
-      // RATING is included only if all submitted values are <= 5.
-      if (qData.type === 'STAR_RATING' || (qData.type === 'RATING' && maxVal <= 5)) {
-        csatValues.push(...qData.values);
+
+    ratingAnswers.forEach((a) => {
+      const numVal = parseFloat(a.value);
+      if (isNaN(numVal) || numVal <= 0) return;
+
+      if (a.question.type === 'STAR_RATING') {
+        // STAR_RATING is 1–5 scale. Clamp to max 5.
+        csatValues.push(Math.min(5, Math.max(1, numVal)));
+      } else if (a.question.type === 'RATING') {
+        // RATING questions with values <= 5 belong to a 1–5 scale.
+        // Ratings > 5 (e.g. 1–10 scale) are excluded to prevent scores > 5.0.
+        if (numVal <= 5) {
+          csatValues.push(numVal);
+        }
       }
     });
 
@@ -77,6 +73,8 @@ export class AnalyticsService {
       const sum = csatValues.reduce((acc, curr) => acc + curr, 0);
       avgRating = sum / csatValues.length;
     }
+    // Strict safety clamp to 5.0 max
+    avgRating = Math.min(5.0, Math.max(0, avgRating));
 
     // Rating distribution for 1-5 star bar chart
     const ratingCounts: Record<string, number> = {
