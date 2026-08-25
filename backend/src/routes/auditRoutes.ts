@@ -7,6 +7,17 @@ const router = Router();
 
 router.use(authenticate);
 
+<<<<<<< HEAD
+router.get(
+  '/logs',
+  authorizeRoles('ADMIN'),
+  AuditController.getAuditLogs
+);
+
+router.get('/notifications', AuditController.getNotifications);
+
+export default router;
+=======
 /**
  * @openapi
  * /api/v1/audit/logs:
@@ -19,11 +30,7 @@ router.use(authenticate);
  *       200:
  *         description: List of audit logs
  */
-router.get(
-  '/logs',
-  authorizeRoles('ADMIN'),
-  AuditController.getAuditLogs
-);
+router.get('/logs', AuditController.getAuditLogs);
 
 /**
  * @openapi
@@ -40,3 +47,5 @@ router.get(
 router.get('/notifications', AuditController.getNotifications);
 
 export default router;
+
+>>>>>>> b614c29 (fix: prepare project for production deployment)

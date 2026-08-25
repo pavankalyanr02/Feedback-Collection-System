@@ -16,8 +16,7 @@ router.use(authenticate);
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Dashboard statistics and charts data
-Submissions overview
+ *         description: Dashboard statistics and charts data and submissions overview
  */
 router.get('/dashboard', AnalyticsController.getDashboardOverview);
 
