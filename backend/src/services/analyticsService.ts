@@ -29,7 +29,9 @@ export class AnalyticsService {
       }),
     ]);
 
-    // Rating questions calculation for overall average
+    // CSAT (Customer Satisfaction) calculation for overall average rating.
+    // CSAT is strictly calculated from 1–5 scale rating questions (such as STAR_RATING).
+    // Questions with 1-10 rating scales (such as "Ease of Use 1 to 10") are excluded to avoid invalid averages > 5.0.
     const ratingAnswers = await prisma.feedbackAnswer.findMany({
       where: {
         question: {
@@ -37,21 +39,46 @@ export class AnalyticsService {
           type: { in: ['RATING', 'STAR_RATING'] },
         },
       },
-      select: { value: true },
+      select: {
+        value: true,
+        question: {
+          select: {
+            id: true,
+            type: true,
+          },
+        },
+      },
+    });
+
+    const answersByQuestion: Record<string, { type: string; values: number[] }> = {};
+    ratingAnswers.forEach((a) => {
+      const qId = a.question.id;
+      const numVal = parseFloat(a.value);
+      if (!isNaN(numVal)) {
+        if (!answersByQuestion[qId]) {
+          answersByQuestion[qId] = { type: a.question.type, values: [] };
+        }
+        answersByQuestion[qId].values.push(numVal);
+      }
+    });
+
+    const csatValues: number[] = [];
+    Object.values(answersByQuestion).forEach((qData) => {
+      const maxVal = Math.max(...qData.values);
+      // STAR_RATING is explicitly 1-5 scale.
+      // RATING is included only if all submitted values are <= 5.
+      if (qData.type === 'STAR_RATING' || (qData.type === 'RATING' && maxVal <= 5)) {
+        csatValues.push(...qData.values);
+      }
     });
 
     let avgRating = 0;
-    if (ratingAnswers.length > 0) {
-      const validRatings = ratingAnswers
-        .map((a) => parseFloat(a.value))
-        .filter((val) => !isNaN(val));
-      if (validRatings.length > 0) {
-        avgRating =
-          validRatings.reduce((sum, curr) => sum + curr, 0) / validRatings.length;
-      }
+    if (csatValues.length > 0) {
+      const sum = csatValues.reduce((acc, curr) => acc + curr, 0);
+      avgRating = sum / csatValues.length;
     }
 
-    // Rating distribution for bar chart
+    // Rating distribution for 1-5 star bar chart
     const ratingCounts: Record<string, number> = {
       '1 Star': 0,
       '2 Stars': 0,
@@ -60,8 +87,8 @@ export class AnalyticsService {
       '5 Stars': 0,
     };
 
-    ratingAnswers.forEach((a) => {
-      const score = Math.round(parseFloat(a.value));
+    csatValues.forEach((scoreVal) => {
+      const score = Math.round(scoreVal);
       if (score >= 1 && score <= 5) {
         ratingCounts[`${score} Star${score > 1 ? 's' : ''}`]++;
       }

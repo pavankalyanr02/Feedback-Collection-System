@@ -129,6 +129,8 @@ describe('Feedback Collection System - API Integration Tests', () => {
       expect(res.body.success).toBe(true);
       expect(res.body.data.summary.totalForms).toBeGreaterThan(0);
       expect(res.body.data.summary.totalResponses).toBeGreaterThan(0);
+      expect(res.body.data.summary.averageRating).toBeGreaterThanOrEqual(4.2);
+      expect(res.body.data.summary.averageRating).toBeLessThanOrEqual(5.0);
       expect(Array.isArray(res.body.data.ratingDistribution)).toBe(true);
     });
   });

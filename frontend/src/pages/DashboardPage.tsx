@@ -143,7 +143,10 @@ export const DashboardPage: React.FC = () => {
               <Star className="w-5 h-5 fill-amber-400" />
             </div>
           </div>
-          <p className="text-3xl font-extrabold text-slate-100 mt-3">{summary.averageRating} <span className="text-sm font-normal text-slate-400">/ 5.0</span></p>
+          <p className="text-3xl font-extrabold text-slate-100 mt-3">
+            {summary.averageRating > 0 ? Number(summary.averageRating).toFixed(1) : '0.0'}{' '}
+            <span className="text-sm font-normal text-slate-400">/ 5.0</span>
+          </p>
           <p className="text-xs text-slate-500 mt-1">Satisfaction index</p>
         </div>
       </div>
