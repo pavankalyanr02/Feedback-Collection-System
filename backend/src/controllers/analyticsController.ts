@@ -16,7 +16,7 @@ export class AnalyticsController {
   static async getFormAnalytics(req: Request, res: Response, next: NextFunction) {
     try {
       const formId = req.params.id;
-      const analytics = await AnalyticsService.getFormAnalytics(formId);
+      const analytics = await AnalyticsService.getFormAnalytics(formId, req.user?.organizationId);
       return sendSuccess(res, analytics, 'Form analytics fetched successfully');
     } catch (error) {
       return next(error);

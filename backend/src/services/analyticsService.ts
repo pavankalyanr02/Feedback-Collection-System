@@ -98,7 +98,7 @@ export class AnalyticsService {
     };
   }
 
-  static async getFormAnalytics(formId: string) {
+  static async getFormAnalytics(formId: string, orgId?: string) {
     const form = await prisma.feedbackForm.findUnique({
       where: { id: formId },
       include: {
@@ -117,6 +117,10 @@ export class AnalyticsService {
 
     if (!form) {
       throw AppError.notFound('Form not found');
+    }
+
+    if (orgId && form.organizationId !== orgId) {
+      throw AppError.forbidden('Access denied to this form');
     }
 
     const totalResponses = form._count.responses;

@@ -10,9 +10,23 @@ jobs:
   backend-tests:
     name: Backend Lint, Build & Test
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgrespassword
+          POSTGRES_DB: feedback_db_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d feedback_db_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
     env:
       NODE_ENV: test
-      DATABASE_URL: "file:./test.db"
+      DATABASE_URL: "postgresql://postgres:postgrespassword@localhost:5432/feedback_db_test?schema=public"
       JWT_SECRET: "ci_jwt_secret_key_feedback_2026"
       JWT_REFRESH_SECRET: "ci_jwt_refresh_secret_key_feedback_2026"
       PORT: "5000"

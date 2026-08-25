@@ -20,7 +20,6 @@ build/
 # Prisma & Databases
 backend/prisma/*.db
 backend/prisma/*.db-journal
-backend/prisma/migrations/
 
 # Logs & Debug
 logs

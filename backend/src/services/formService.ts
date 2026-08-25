@@ -210,11 +210,16 @@ export class FormService {
       onePerUser?: boolean;
       expiresAt?: string | null;
       questions?: any[];
-    }
+    },
+    orgId?: string
   ) {
     const existing = await prisma.feedbackForm.findUnique({ where: { id: formId } });
     if (!existing) {
       throw AppError.notFound('Form not found');
+    }
+
+    if (orgId && existing.organizationId !== orgId) {
+      throw AppError.forbidden('Access denied to this form');
     }
 
     // If questions are provided, handle replace/update batch
@@ -274,8 +279,8 @@ export class FormService {
     return updated;
   }
 
-  static async duplicateForm(formId: string, creatorId: string) {
-    const original = await this.getFormById(formId);
+  static async duplicateForm(formId: string, creatorId: string, orgId?: string) {
+    const original = await this.getFormById(formId, orgId);
 
     const duplicated = await prisma.feedbackForm.create({
       data: {
@@ -315,10 +320,14 @@ export class FormService {
     return duplicated;
   }
 
-  static async deleteForm(formId: string) {
+  static async deleteForm(formId: string, orgId?: string) {
     const existing = await prisma.feedbackForm.findUnique({ where: { id: formId } });
     if (!existing) {
       throw AppError.notFound('Form not found');
+    }
+
+    if (orgId && existing.organizationId !== orgId) {
+      throw AppError.forbidden('Access denied to this form');
     }
 
     await prisma.feedbackForm.delete({ where: { id: formId } });

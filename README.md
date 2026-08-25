@@ -327,15 +327,76 @@ Security measures implemented in the application include:
 * Parameterized Queries: SQL injection mitigation via Prisma ORM.
 * CORS Restrictions: Configured cross-origin resource sharing policy.
 
-## Deployment
+## Production Deployment
 
-To deploy the application to a cloud host:
+This project is configured for cloud production deployment using:
+* **Frontend:** Vercel
+* **Backend:** Render
+* **Database:** PostgreSQL (Neon / Supabase / Render PostgreSQL)
+* **Source Control:** GitHub (`main` branch)
 
-1. Configure frontend environment variables to point to the production backend API URL.
-2. Configure backend environment variables (`DATABASE_URL`, `JWT_SECRET`, `JWT_REFRESH_SECRET`, `CORS_ORIGIN`).
-3. Provision a managed PostgreSQL instance and run database migrations.
-4. Deploy the backend to a Node.js web service environment (such as Render, Railway, or AWS).
-5. Deploy the frontend static assets or Nginx container (such as Vercel, Netlify, or Docker).
+### 1. Database Setup (Neon / Supabase / Render Postgres)
+
+1. Provision a PostgreSQL database instance on Neon, Supabase, or Render.
+2. Obtain your PostgreSQL connection string (`DATABASE_URL`), formatted like:
+   ```env
+   DATABASE_URL=postgresql://user:password@ep-sample-12345.us-east-1.aws.neon.tech/feedback_db?sslmode=require
+   ```
+
+### 2. Render Backend Deployment
+
+1. Create a new **Web Service** on Render connected to your GitHub repository.
+2. Set **Root Directory** to `backend`.
+3. Set **Environment** to `Node`.
+4. Set **Build Command**:
+   ```bash
+   npm install && npx prisma generate && npx prisma migrate deploy && npm run build
+   ```
+5. Set **Start Command**:
+   ```bash
+   npm start
+   ```
+6. Add the following **Environment Variables** in Render:
+   | Variable | Example / Purpose |
+   | --- | --- |
+   | `NODE_ENV` | `production` |
+   | `PORT` | `10000` (or leave default set by Render) |
+   | `DATABASE_URL` | `postgresql://user:password@host/dbname?sslmode=require` |
+   | `JWT_SECRET` | Strong random 64-character string |
+   | `JWT_REFRESH_SECRET` | Strong random 64-character string |
+   | `FRONTEND_URL` | `https://your-app.vercel.app` |
+   | `CORS_ORIGIN` | `https://your-app.vercel.app` |
+
+7. Render Health Check Path: `/health`
+
+### 3. Vercel Frontend Deployment
+
+1. Import your GitHub repository in Vercel.
+2. Set **Root Directory** to `frontend`.
+3. Set **Framework Preset** to `Vite`.
+4. Set **Build Command**: `npm run build`
+5. Set **Output Directory**: `dist`
+6. Add the following **Environment Variable** in Vercel:
+   | Variable | Example / Purpose |
+   | --- | --- |
+   | `VITE_API_URL` | `https://your-backend.onrender.com/api/v1` |
+
+8. Deploy application. All API calls will route directly to your Render backend.
+
+## Production Verification & Health Endpoint
+
+The backend provides a dedicated health check endpoint at `GET /health` to verify server uptime and PostgreSQL database connectivity.
+
+Example response:
+```json
+{
+  "status": "healthy",
+  "database": "connected",
+  "environment": "production",
+  "uptime": 3600.42,
+  "timestamp": "2026-08-25T13:15:00.000Z"
+}
+```
 
 ## Future Improvements
 

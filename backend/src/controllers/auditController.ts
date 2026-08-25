@@ -2,10 +2,27 @@ import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../config/db';
 import { sendSuccess } from '../utils/apiResponse';
 
+import { AppError } from '../utils/AppError';
+
 export class AuditController {
   static async getAuditLogs(req: Request, res: Response, next: NextFunction) {
     try {
       const organizationId = (req.query.organizationId as string) || req.user?.organizationId!;
+
+      if (organizationId) {
+        const member = await prisma.organizationMember.findUnique({
+          where: {
+            organizationId_userId: {
+              organizationId,
+              userId: req.user!.userId,
+            },
+          },
+        });
+        if (!member) {
+          return next(AppError.forbidden('Access denied to this organization logs'));
+        }
+      }
+
       const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
       const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 20;
       const skip = (page - 1) * limit;

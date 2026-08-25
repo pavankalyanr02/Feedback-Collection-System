@@ -60,7 +60,7 @@ export class FormController {
 
   static async updateForm(req: Request, res: Response, next: NextFunction) {
     try {
-      const form = await FormService.updateForm(req.params.id, req.body);
+      const form = await FormService.updateForm(req.params.id, req.body, req.user?.organizationId);
       return sendSuccess(res, form, 'Form updated successfully');
     } catch (error) {
       return next(error);
@@ -69,7 +69,7 @@ export class FormController {
 
   static async publishForm(req: Request, res: Response, next: NextFunction) {
     try {
-      const form = await FormService.updateForm(req.params.id, { status: 'PUBLISHED' });
+      const form = await FormService.updateForm(req.params.id, { status: 'PUBLISHED' }, req.user?.organizationId);
       return sendSuccess(res, form, 'Form published successfully');
     } catch (error) {
       return next(error);
@@ -78,7 +78,7 @@ export class FormController {
 
   static async duplicateForm(req: Request, res: Response, next: NextFunction) {
     try {
-      const form = await FormService.duplicateForm(req.params.id, req.user!.userId);
+      const form = await FormService.duplicateForm(req.params.id, req.user!.userId, req.user?.organizationId);
       return sendSuccess(res, form, 'Form duplicated successfully', 201);
     } catch (error) {
       return next(error);
@@ -87,7 +87,7 @@ export class FormController {
 
   static async deleteForm(req: Request, res: Response, next: NextFunction) {
     try {
-      await FormService.deleteForm(req.params.id);
+      await FormService.deleteForm(req.params.id, req.user?.organizationId);
       return sendSuccess(res, null, 'Form deleted successfully');
     } catch (error) {
       return next(error);

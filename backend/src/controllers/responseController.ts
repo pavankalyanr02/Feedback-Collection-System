@@ -31,7 +31,11 @@ export class ResponseController {
       const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10;
       const search = req.query.search as string;
 
-      const result = await ResponseService.getFormResponses(formId, { page, limit, search });
+      const result = await ResponseService.getFormResponses(
+        formId,
+        { page, limit, search },
+        req.user?.organizationId
+      );
       return sendSuccess(res, result.responses, 'Responses fetched', 200, result.pagination);
     } catch (error) {
       return next(error);
@@ -40,7 +44,7 @@ export class ResponseController {
 
   static async deleteResponse(req: Request, res: Response, next: NextFunction) {
     try {
-      await ResponseService.deleteResponse(req.params.responseId);
+      await ResponseService.deleteResponse(req.params.responseId, req.user?.organizationId);
       return sendSuccess(res, null, 'Response deleted successfully');
     } catch (error) {
       return next(error);

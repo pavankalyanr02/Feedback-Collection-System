@@ -78,8 +78,18 @@ export class ResponseService {
 
   static async getFormResponses(
     formId: string,
-    params: { page?: number; limit?: number; search?: string }
+    params: { page?: number; limit?: number; search?: string },
+    orgId?: string
   ) {
+    const form = await prisma.feedbackForm.findUnique({ where: { id: formId } });
+    if (!form) {
+      throw AppError.notFound('Form not found');
+    }
+
+    if (orgId && form.organizationId !== orgId) {
+      throw AppError.forbidden('Access denied to this form');
+    }
+
     const page = Math.max(1, params.page || 1);
     const limit = Math.min(100, Math.max(1, params.limit || 10));
     const skip = (page - 1) * limit;
@@ -130,10 +140,17 @@ export class ResponseService {
     };
   }
 
-  static async deleteResponse(responseId: string) {
-    const existing = await prisma.feedbackResponse.findUnique({ where: { id: responseId } });
+  static async deleteResponse(responseId: string, orgId?: string) {
+    const existing = await prisma.feedbackResponse.findUnique({
+      where: { id: responseId },
+      include: { form: { select: { organizationId: true } } },
+    });
     if (!existing) {
       throw AppError.notFound('Response not found');
+    }
+
+    if (orgId && existing.form.organizationId !== orgId) {
+      throw AppError.forbidden('Access denied');
     }
 
     await prisma.feedbackResponse.delete({ where: { id: responseId } });
