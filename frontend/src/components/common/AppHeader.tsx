@@ -1,17 +1,34 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { ThemeToggle } from './ThemeToggle';
-import { Bell, Building2, LogOut, ChevronDown, User as UserIcon } from 'lucide-react';
+import { Bell, Building2, LogOut, ChevronDown, Menu, X } from 'lucide-react';
 
-export const AppHeader: React.FC = () => {
+interface AppHeaderProps {
+  isMobileMenuOpen?: boolean;
+  onToggleMobileMenu?: () => void;
+}
+
+export const AppHeader: React.FC<AppHeaderProps> = ({
+  isMobileMenuOpen,
+  onToggleMobileMenu,
+}) => {
   const { user, organizations, currentOrg, setCurrentOrg, logout } = useAuth();
   const [showOrgDropdown, setShowOrgDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 h-16 border-b border-slate-800/80 glass-panel px-6 flex items-center justify-between">
-      {/* Left: Organization Selector */}
-      <div className="relative">
+    <header className="sticky top-0 z-40 h-16 border-b border-slate-800/80 glass-panel px-3 sm:px-6 flex items-center justify-between">
+      {/* Left: Mobile Menu Toggle & Organization Selector */}
+      <div className="flex items-center space-x-3">
+        <button
+          onClick={onToggleMobileMenu}
+          className="p-2 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-900/80 border border-slate-800 lg:hidden transition-colors"
+          aria-label="Toggle navigation menu"
+        >
+          {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
+
+        <div className="relative">
         <button
           onClick={() => setShowOrgDropdown(!showOrgDropdown)}
           className="flex items-center space-x-3 px-3 py-1.5 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition-colors"
@@ -50,6 +67,7 @@ export const AppHeader: React.FC = () => {
             ))}
           </div>
         )}
+      </div>
       </div>
 
       {/* Right: Notifications, Theme Toggle, User Profile */}

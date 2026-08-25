@@ -25,8 +25,8 @@ export const AuditLogsPage: React.FC = () => {
   const pagination = data?.pagination || { page: 1, limit: 15, total: 0, totalPages: 1 };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-300">
-      <div className="glass-panel p-6 rounded-3xl border border-slate-800">
+    <div className="p-3.5 sm:p-6 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-300 min-w-0">
+      <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800">
         <h1 className="text-2xl font-extrabold text-slate-100 flex items-center gap-2">
           <ShieldCheck className="w-6 h-6 text-brand-400" />
           Security Audit Trail

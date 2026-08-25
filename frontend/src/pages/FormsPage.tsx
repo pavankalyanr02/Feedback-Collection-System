@@ -84,14 +84,14 @@ export const FormsPage: React.FC = () => {
   const pagination = data?.pagination || { page: 1, limit: 9, total: 0, totalPages: 1 };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-300">
+    <div className="p-3.5 sm:p-6 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-300 min-w-0">
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-100 tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-100 tracking-tight">
             Feedback <span className="text-gradient">Forms</span>
           </h1>
-          <p className="text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-400">
             Create, publish, manage, and share your feedback collection forms.
           </p>
         </div>
@@ -105,7 +105,7 @@ export const FormsPage: React.FC = () => {
       </div>
 
       {/* Search & Filter Bar */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 glass-panel p-4 rounded-2xl border border-slate-800">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 glass-panel p-3.5 sm:p-4 rounded-2xl border border-slate-800 w-full min-w-0">
         <div className="relative w-full md:w-80">
           <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
           <input
@@ -121,7 +121,7 @@ export const FormsPage: React.FC = () => {
         </div>
 
         {/* Filter Status Tabs */}
-        <div className="flex p-1 bg-slate-900/80 rounded-xl border border-slate-800 w-full md:w-auto">
+        <div className="flex p-1 bg-slate-900/80 rounded-xl border border-slate-800 w-full md:w-auto overflow-x-auto custom-scrollbar">
           {[
             { label: 'All', value: '' },
             { label: 'Published', value: 'PUBLISHED' },

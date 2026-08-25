@@ -58,9 +58,9 @@ export const ResponsesPage: React.FC = () => {
   const pagination = responsesData?.pagination || { page: 1, limit: 10, total: 0, totalPages: 1 };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-300">
+    <div className="p-3.5 sm:p-6 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-300 min-w-0">
       {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-panel p-6 rounded-3xl border border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800">
         <div>
           <span className="text-xs font-semibold text-brand-400 uppercase tracking-wider">Response Management</span>
           <h1 className="text-2xl font-extrabold text-slate-100">{formData?.title || 'Form Responses'}</h1>

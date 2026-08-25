@@ -16,6 +16,7 @@ import { NotFoundPage } from '../pages/NotFoundPage';
 
 const ProtectedLayout: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   if (isLoading) {
     return (
@@ -30,11 +31,17 @@ const ProtectedLayout: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-      <AppHeader />
-      <div className="flex flex-1">
-        <AppSidebar />
-        <main className="flex-1 p-2 md:p-6 overflow-y-auto">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col overflow-x-hidden">
+      <AppHeader
+        isMobileMenuOpen={mobileMenuOpen}
+        onToggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)}
+      />
+      <div className="flex flex-1 relative min-h-0">
+        <AppSidebar
+          isMobileMenuOpen={mobileMenuOpen}
+          onCloseMobileMenu={() => setMobileMenuOpen(false)}
+        />
+        <main className="flex-1 p-3 sm:p-6 overflow-y-auto overflow-x-hidden min-w-0">
           <Outlet />
         </main>
       </div>

@@ -45,11 +45,11 @@ export const AnalyticsPage: React.FC = () => {
   const COLORS = ['#0c82ff', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-300">
+    <div className="p-3.5 sm:p-6 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-300 min-w-0">
       {/* Header & Form Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-panel p-6 rounded-3xl border border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-100 tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-100 tracking-tight">
             Form <span className="text-gradient">Analytics Engine</span>
           </h1>
           <p className="text-xs text-slate-400 mt-1">Deep question-level telemetry and customer response statistics</p>
@@ -59,7 +59,7 @@ export const AnalyticsPage: React.FC = () => {
           <select
             value={activeFormId}
             onChange={(e) => setSelectedFormId(e.target.value)}
-            className="bg-slate-900 border border-slate-800 text-slate-100 font-semibold text-xs rounded-xl px-4 py-2.5 focus:outline-none focus:border-brand-500"
+            className="bg-slate-900 border border-slate-800 text-slate-100 font-semibold text-xs rounded-xl px-4 py-2.5 focus:outline-none focus:border-brand-500 w-full sm:w-auto max-w-full truncate"
           >
             {forms.map((f: any) => (
               <option key={f.id} value={f.id}>
@@ -110,12 +110,12 @@ export const AnalyticsPage: React.FC = () => {
 
           {/* Daily Trend Line Chart */}
           {analytics.dailyTrends?.length > 0 && (
-            <div className="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
-              <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+            <div className="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-4 min-w-0">
+              <h2 className="text-base sm:text-lg font-bold text-slate-100 flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-brand-400" />
                 Response Volume Over Time
               </h2>
-              <div className="h-64 w-full pt-4">
+              <div className="h-56 sm:h-64 w-full pt-4 min-w-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={analytics.dailyTrends}>
                     <XAxis dataKey="date" stroke="#64748b" fontSize={12} tickLine={false} />

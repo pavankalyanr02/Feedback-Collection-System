@@ -193,21 +193,21 @@ export const FormBuilderPage: React.FC = () => {
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6 animate-in fade-in duration-300">
+    <div className="p-3.5 sm:p-6 max-w-5xl mx-auto space-y-6 animate-in fade-in duration-300 min-w-0">
       {/* Top Builder Control Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-panel p-4 rounded-2xl border border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-panel p-3.5 sm:p-4 rounded-2xl border border-slate-800 min-w-0">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-500 to-indigo-600 flex items-center justify-center text-white shadow-md">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-500 to-indigo-600 flex items-center justify-center text-white shadow-md shrink-0">
             <Sparkles className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-xl font-extrabold text-slate-100">Feedback Form Builder</h1>
+            <h1 className="text-lg sm:text-xl font-extrabold text-slate-100">Feedback Form Builder</h1>
             <p className="text-xs text-slate-400">Design dynamic questions and custom validation rules</p>
           </div>
         </div>
 
         {/* Action Toolbar */}
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <div className="flex p-1 bg-slate-900 rounded-xl border border-slate-800">
             <button
               onClick={() => setActiveTab('editor')}
