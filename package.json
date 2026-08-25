@@ -14,7 +14,7 @@
     "test:frontend": "cd frontend && npm test",
     "test": "npm run test:backend",
     "prisma:generate": "cd backend && npx prisma generate",
-    "prisma:migrate": "cd backend && npx prisma migrate dev",
+    "prisma:migrate": "cd backend && npx prisma migrate deploy",
     "prisma:seed": "cd backend && npx prisma db seed",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down"
